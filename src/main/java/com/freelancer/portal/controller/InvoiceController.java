@@ -149,6 +149,26 @@ public class InvoiceController {
     }
     
     /**
+     * Download invoice as PDF.
+     * Only accessible if the invoice belongs to the current user.
+     */
+    @GetMapping("/{id}/pdf")
+    @PreAuthorize("hasAnyAuthority('ROLE_FREELANCER', 'ROLE_CLIENT')")
+    public ResponseEntity<org.springframework.core.io.Resource> downloadInvoicePdf(@PathVariable Long id) {
+        try {
+            log.debug("Downloading PDF for invoice with ID: {}", id);
+            org.springframework.core.io.Resource pdfResource = invoiceService.downloadInvoicePdf(id);
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=invoice_" + id + ".pdf")
+                    .header("Content-Type", "application/pdf")
+                    .body(pdfResource);
+        } catch (Exception e) {
+            log.error("Error downloading PDF for invoice with ID: {}", id, e);
+            throw new com.freelancer.portal.exception.ResourceNotFoundException("PDF for invoice with ID " + id + " could not be generated");
+        }
+    }
+    
+    /**
      * Delete an invoice.
      * Only accessible if the invoice belongs to the current user.
      */

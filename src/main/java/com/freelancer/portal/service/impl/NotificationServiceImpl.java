@@ -183,32 +183,14 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public int markAllNotificationsAsRead() {
         User currentUser = getCurrentUser();
-        List<Notification> unreadNotifications = notificationRepository.findByRecipientAndIsReadFalseOrderByCreatedAtDesc(
-                currentUser, Pageable.unpaged()).getContent();
-
-        int count = 0;
-        for (Notification notification : unreadNotifications) {
-            notification.markAsRead();
-            notification = notificationRepository.save(notification);
-
-            // Send the notification via WebSocket
-            try {
-                // Get the WebSocketMessageController bean to send the notification
-                WebSocketMessageController webSocketController = applicationContext.getBean(WebSocketMessageController.class);
-
-                // Convert to DTO and send via WebSocket
-                NotificationDto notificationDto = NotificationMapper.toDto(notification);
-                webSocketController.sendNotificationToUser(currentUser.toString(), notificationDto);
-
-                String title = notification.getTitle(); // Ensure 'title' is initialized
-                log.info("Sent message notification via WebSocket: {}", title);
-            } catch (Exception e) {
-                log.error("Failed to send message notification via WebSocket: {}", e.getMessage(), e);
-            }
-            count++;
-        }
-
-        return count;
+        
+        // Use the repository method that performs a batch update
+        int updatedCount = notificationRepository.markAllAsReadForUser(currentUser);
+        
+        // Log the operation
+        log.info("Marked {} notifications as read for user {}", updatedCount, currentUser.getEmail());
+        
+        return updatedCount;
     }
     
     @Override
