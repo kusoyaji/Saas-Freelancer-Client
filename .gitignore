@@ -18,11 +18,9 @@ logs/
 # Node modules
 node_modules/
 dist/
-package.json
-package-lock.json
-freelancer-portal/node_modules/
-application.yml
 
+freelancer-portal/node_modules/
+src/main/resources/application.yml
 # Maven
 .mvn/wrapper/maven-wrapper.jar
 
