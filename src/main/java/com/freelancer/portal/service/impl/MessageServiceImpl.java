@@ -232,6 +232,7 @@ public class MessageServiceImpl implements MessageService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public Page<MessageDto> getMessagesByConversation(Long conversationId, Pageable pageable) {
         User currentUser = getCurrentUser();
         

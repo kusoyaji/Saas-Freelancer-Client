@@ -5,7 +5,9 @@ import com.freelancer.portal.dto.UserUpdateDto;
 import com.freelancer.portal.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -64,4 +66,21 @@ public interface UserService {
     UserDTO getUserDTOByEmail(String email);
     UserDTO getUserDTOById(Long id);
     UserDTO updateUserDTO(Long id, UserDTO userDTO);
+
+    /**
+     * Update the current user's profile picture.
+     *
+     * @param file the profile picture file
+     * @return the updated user DTO
+     * @throws IOException if an I/O error occurs
+     */
+    UserDTO updateProfilePicture(MultipartFile file) throws IOException;
+
+    /**
+     * Delete the current user's profile picture.
+     *
+     * @return the updated user DTO
+     * @throws IOException if an I/O error occurs
+     */
+    UserDTO deleteProfilePicture() throws IOException;
 }

@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,5 +85,23 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Upload profile picture for the current user.
+     */
+    @PostMapping("/me/profile-picture")
+    public ResponseEntity<UserDTO> uploadProfilePicture(@RequestParam("file") MultipartFile file) throws IOException {
+        UserDTO updatedUser = userService.updateProfilePicture(file);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    /**
+     * Delete profile picture for the current user.
+     */
+    @DeleteMapping("/me/profile-picture")
+    public ResponseEntity<UserDTO> deleteProfilePicture() throws IOException {
+        UserDTO updatedUser = userService.deleteProfilePicture();
+        return ResponseEntity.ok(updatedUser);
     }
 }

@@ -50,6 +50,9 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**").permitAll()
                 .requestMatchers("/swagger-ui/**").permitAll()
                 .requestMatchers("/swagger-ui.html").permitAll()
+                // Actuator endpoints for health checks
+                .requestMatchers("/actuator/health/**").permitAll()
+                .requestMatchers("/actuator/info").permitAll()
                 // Explicitly permit WebSocket endpoints
                 .requestMatchers("/api/v1/ws/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
@@ -57,6 +60,8 @@ public class SecurityConfig {
                 .requestMatchers("/queue/**").permitAll()
                 .requestMatchers("/app/**").permitAll()
                 .requestMatchers("/user/**").permitAll()
+                // Allow access to uploaded files (profile pictures, etc.)
+                .requestMatchers("/uploads/**").permitAll()
                 
                 // All other API endpoints require authentication, but don't require specific roles here
                 // We'll use method-level security with @PreAuthorize for fine-grained control
@@ -81,7 +86,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+        // Allow all origins during development - restrict in production
+        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList(
             "Authorization", "Content-Type", "X-Requested-With", "Accept", 
